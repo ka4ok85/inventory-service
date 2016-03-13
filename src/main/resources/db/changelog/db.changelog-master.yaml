@@ -1,0 +1,137 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: evgeny
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: int(11)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: sku
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: int(11)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: stores
+            columns:
+              - column:
+                  name: id
+                  type: int(11)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: products_in_stores
+            columns:
+              - column:
+                  name: id
+                  type: int(11)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: store_id
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: int(11)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: products_in_stores
+            constraintName: fk_product_1
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: products
+        - addForeignKeyConstraint:
+            baseColumnNames: store_id
+            baseTableName: products_in_stores
+            constraintName: fk_store_1
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: stores
+        - addUniqueConstraint:
+            columnNames: product_id, store_id
+            constraintName: product_in_store_unique
+            tableName: products_in_stores
+        - createTable:
+            tableName: product_locations
+            columns:
+              - column:
+                  name: id
+                  type: int(11)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_in_store_id
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shelf
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: slot
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: int(11)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: product_in_store_id
+            baseTableName: product_locations
+            constraintName: fk_product_in_store_1
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: products_in_stores
+        - addUniqueConstraint:
+            columnNames: product_in_store_id, shelf, slot
+            constraintName: product_in_store_location_unique
+            tableName: product_locations
