@@ -135,3 +135,68 @@ databaseChangeLog:
             columnNames: product_in_store_id, shelf, slot
             constraintName: product_in_store_location_unique
             tableName: product_locations
+  - changeSet:
+      id: 2
+      author: evgeny
+      changes:
+        - dropTable:
+            tableName: product_locations            
+  - changeSet:
+      id: 3
+      author: evgeny
+      changes:
+        - createTable:
+            tableName: product_locations
+            columns:
+              - column:
+                  name: id
+                  type: int(11)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: store_id
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shelf
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: slot
+                  type: int(11)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: int(11)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: product_locations
+            constraintName: fk_product_2
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: products
+        - addForeignKeyConstraint:
+            baseColumnNames: store_id
+            baseTableName: product_locations
+            constraintName: fk_store_2
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: stores
+        - addUniqueConstraint:
+            columnNames: product_id, store_id, shelf, slot
+            constraintName: product_location_unique
+            tableName: product_locations

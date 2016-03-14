@@ -18,8 +18,8 @@ import org.springframework.data.domain.Persistable;
 
 @Entity
 @Embeddable
-public class ProductinstoreID implements Persistable<Long> {
-    private static final long serialVersionUID = 9036301906172917822L;
+public class ProductlocationID implements Persistable<Long> {
+    private static final long serialVersionUID = 9036301906172917823L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -56,7 +56,7 @@ public class ProductinstoreID implements Persistable<Long> {
 
     @Override
     public String toString() {
-        return "ProductinstoreID [id=" + id + ", product=" + product + ", store=" + store + "]";
+        return "ProductlocationID [id=" + id + ", product=" + product + ", store=" + store + "]";
     }
 
     @Override

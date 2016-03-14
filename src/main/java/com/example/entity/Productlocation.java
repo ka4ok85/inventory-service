@@ -17,24 +17,48 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
-@Table(name = "products_in_stores")
+@Table(name = "product_locations")
 @AssociationOverrides({ @AssociationOverride(name = "pk.product", joinColumns = @JoinColumn(name = "product_id") ),
 @AssociationOverride(name = "pk.store", joinColumns = @JoinColumn(name = "store_id") ) })
-public class Productinstore {
+public class Productlocation {
 
-    private ProductinstoreID pk = new ProductinstoreID();
+    private ProductlocationID pk = new ProductlocationID();
 
-    @JsonView(com.example.entity.Productinstore.class)
+    @JsonView(com.example.entity.Productlocation.class)
+    @Column(name = "shelf", nullable = false)
+    private int shelf;
+
+    @JsonView(com.example.entity.Productlocation.class)
+    @Column(name = "slot", nullable = false)
+    private int slot;
+
+    @JsonView(com.example.entity.Productlocation.class)
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
     @EmbeddedId
-    public ProductinstoreID getPk() {
+    public ProductlocationID getPk() {
         return pk;
     }
 
-    public void setPk(ProductinstoreID pk) {
+    public void setPk(ProductlocationID pk) {
         this.pk = pk;
+    }
+
+    public int getShelf() {
+        return shelf;
+    }
+
+    public void setShelf(int shelf) {
+        this.shelf = shelf;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
     public int getQuantity() {
@@ -65,8 +89,7 @@ public class Productinstore {
 
     @Override
     public String toString() {
-        return "Productinstore [quantity=" + quantity + "]";
+        return "Productlocation [shelf=" + shelf + ", slot=" + slot + ", quantity=" + quantity + "]";
     }
-
 
 }

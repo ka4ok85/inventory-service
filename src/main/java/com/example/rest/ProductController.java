@@ -1,5 +1,8 @@
 package com.example.rest;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.NotFoundException;
 import com.example.entity.Product;
 import com.example.entity.Productinstore;
+import com.example.entity.Productlocation;
 import com.example.entity.Store;
 import com.example.repository.ProductRepository;
 import com.example.repository.ProductinstoreRepository;
+import com.example.repository.ProductlocationRepository;
 import com.example.repository.StoreRepository;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -25,11 +30,14 @@ public class ProductController {
     private ProductinstoreRepository productinstoreRepository;
 
     @Autowired
+    private ProductlocationRepository productlocationRepository;
+
+    @Autowired
     private StoreRepository storeRepository;
 
-    @RequestMapping(value = "/api/scanProduct/{productId}/{storeId}/{quantity}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/api/scanProduct/{productId}/{storeId}/{quantity}/{shelf}/{slot}", method = RequestMethod.GET, produces = "application/json")
     @JsonView(com.example.entity.Productinstore.class)
-    public Productinstore scanProduct(@PathVariable("productId") Long productId, @PathVariable("storeId") Long storeId, @PathVariable("quantity") int quantity) {
+    public Productinstore scanProduct(@PathVariable("productId") Long productId, @PathVariable("storeId") Long storeId, @PathVariable("quantity") int quantity, @PathVariable("shelf") int shelf, @PathVariable("slot") int slot) {
         Product product = productRepository.findOne(productId);
         if (product == null) {
             throw new NotFoundException(productId.toString());
@@ -40,14 +48,64 @@ public class ProductController {
             throw new NotFoundException(storeId.toString());
         }
 
+        Boolean productinstoreExists = false;
+        Productinstore existedProductinstore = new Productinstore();
+        Set<Productinstore> productinstores = product.getProductinstores();
+        for (Productinstore productinstore : productinstores) {
+            if (productinstore.getStore().getId().equals(storeId) == true) {
+                productinstoreExists = true;
+                existedProductinstore = productinstore;
+                break;
+            }
+        }
+
+/*
+        Boolean productlocationExists = false;
+        Productlocation existedProductlocation = new Productlocation();
+        Set<Productlocation> productlocationes = product.getProductlocationes();
+        for (Productlocation productlocation : productlocationes) {
+            if (productlocation.getStore().getId().equals(storeId) == true) {
+                productlocationExists = true;
+                existedProductlocation = productlocation;
+                break;
+            }
+        }
+*/
         Productinstore newProductinstore = new Productinstore();
-        newProductinstore.setProduct(product);
-        newProductinstore.setStore(store);
-        newProductinstore.setQuantity(quantity);
+        if (productinstoreExists == false) {
+            newProductinstore.setProduct(product);
+            newProductinstore.setStore(store);
+            newProductinstore.setQuantity(quantity);
+        } else {
+            existedProductinstore.setQuantity(existedProductinstore.getQuantity() + quantity);
+            newProductinstore = existedProductinstore;
+        }
 
-        //newLocation = locationRepository.save(newLocation);
+        Productlocation newProductinlocation = new Productlocation();
+        newProductinlocation.setProduct(product);
+        newProductinlocation.setStore(store);
+        newProductinlocation.setShelf(shelf);
+        newProductinlocation.setSlot(slot);
+        newProductinlocation.setQuantity(quantity);
+/*
+        Productlocation newProductinlocation = new Productlocation();
+        if (productlocationExists == false) {
+            newProductinlocation.setProduct(product);
+            newProductinlocation.setStore(store);
+            newProductinlocation.setShelf(shelf);
+            newProductinlocation.setSlot(slot);
+            newProductinlocation.setQuantity(quantity);
+        } else {
+            existedProductlocation.setQuantity(existedProductlocation.getQuantity() + quantity);
+            existedProductlocation.setShelf(shelf);
+            existedProductlocation.setSlot(slot);
+            newProductinlocation = existedProductlocation;
+        }
+*/
 
+        product.setQuantity(quantity + product.getQuantity());
         product.getProductinstores().add(newProductinstore);
+        product.getProductlocationes().add(newProductinlocation);
         productRepository.save(product);
 
         return newProductinstore;

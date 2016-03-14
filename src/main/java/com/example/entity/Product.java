@@ -44,6 +44,9 @@ public class Product implements Persistable<Long> {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.product", cascade={CascadeType.PERSIST, CascadeType.MERGE})
     Set<Productinstore> productinstores = new HashSet<Productinstore>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.product", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+    Set<Productlocation> productlocationes = new HashSet<Productlocation>();
+
     public Product() {
     }
 
@@ -62,6 +65,14 @@ public class Product implements Persistable<Long> {
 
     public void setProductinstores(Set<Productinstore> productinstores) {
         this.productinstores = productinstores;
+    }
+
+    public Set<Productlocation> getProductlocationes() {
+        return productlocationes;
+    }
+
+    public void setProductlocationes(Set<Productlocation> productlocationes) {
+        this.productlocationes = productlocationes;
     }
 
     public String getSku() {
